@@ -8,7 +8,7 @@
 
 struct GameModules
 {
-	DWORD64 bClient;
+	DWORD64 baseAdress; //DWORD64 rabotalo
 	DWORD32 processId;
 };
 

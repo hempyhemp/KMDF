@@ -26,7 +26,7 @@ BOOLEAN IKernel::GetModules()
 
 	if (!NT_SUCCESS(req.result)) return false;
 
-	Modules->bClient = req.bCLIENT;
+	Modules->baseAdress = req.baseAdress;
 
 	return true;
 }

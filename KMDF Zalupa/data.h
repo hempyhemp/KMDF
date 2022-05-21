@@ -11,4 +11,4 @@ PEPROCESS GameProcess;
 HANDLE CheatId;
 PEPROCESS CheatProcess;
 
-DWORD64 ClientBase;
+DWORD64 BaseAdress; //dword64 rabotalo

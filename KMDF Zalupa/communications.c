@@ -119,13 +119,13 @@ void GetAllModules(PIRP Irp)
 
 	if (pModules)
 	{
-		if (ClientBase == 0)
+		if (BaseAdress == 0)
 		{
 			pModules->result = STATUS_NOT_FOUND;
 		}
 		else
 		{
-			pModules->bCLIENT = ClientBase;
+			pModules->baseAdress = BaseAdress;
 			pModules->result = STATUS_SUCCESS;
 		}
 	}
