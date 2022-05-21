@@ -1,0 +1,77 @@
+;
+; KMDFZalupa.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System ; TODO: specify appropriate Class
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=KMDFZalupa.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+KMDFZalupa_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+KMDFZalupa.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%KMDFZalupa.DeviceDesc%=KMDFZalupa_Device, Root\KMDFZalupa ; TODO: edit hw-id
+
+[KMDFZalupa_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+KMDFZalupa.sys
+
+;-------------- Service installation
+[KMDFZalupa_Device.NT.Services]
+AddService = KMDFZalupa,%SPSVCINST_ASSOCSERVICE%, KMDFZalupa_Service_Inst
+
+; -------------- KMDFZalupa driver install sections
+[KMDFZalupa_Service_Inst]
+DisplayName    = %KMDFZalupa.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\KMDFZalupa.sys
+
+;
+;--- KMDFZalupa_Device Coinstaller installation ------
+;
+
+[KMDFZalupa_Device.NT.CoInstallers]
+AddReg=KMDFZalupa_Device_CoInstaller_AddReg
+CopyFiles=KMDFZalupa_Device_CoInstaller_CopyFiles
+
+[KMDFZalupa_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[KMDFZalupa_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[KMDFZalupa_Device.NT.Wdf]
+KmdfService =  KMDFZalupa, KMDFZalupa_wdfsect
+[KMDFZalupa_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "KMDFZalupa Installation Disk"
+KMDFZalupa.DeviceDesc = "KMDFZalupa Device"
+KMDFZalupa.SVCDESC = "KMDFZalupa Service"
