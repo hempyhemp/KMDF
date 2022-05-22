@@ -63,7 +63,7 @@ typedef struct _KERNEL_GET_MODULES_REQUEST
 
 typedef struct _KERNEL_READ_REQUEST
 {
-	DWORD32	Adress;
+	DWORD64	Adress;
 	DWORD64 Response;
 	SIZE_T Size;
 	NTSTATUS Result;
@@ -71,7 +71,7 @@ typedef struct _KERNEL_READ_REQUEST
 
 typedef struct _KERNEL_WRITE_REQUEST
 {
-	DWORD32	Adress;
+	DWORD64	Adress;
 	DWORD64 Value;
 	SIZE_T Size;
 	NTSTATUS Result;
@@ -80,7 +80,7 @@ typedef struct _KERNEL_WRITE_REQUEST
 typedef struct _KERNEL_INIT_DATA_REQUEST
 {
 	DWORD32 gameId;
-	DWORD32 cheatId;
+	DWORD64 cheatId;
 	NTSTATUS Result;
 }_KERNEL_INIT_DATA_REQUEST, * PKERNEL_INIT_DATA_REQUEST;
 

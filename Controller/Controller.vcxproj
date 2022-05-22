@@ -144,8 +144,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="communication.hpp" />
+    <ClInclude Include="globals.hpp" />
     <ClInclude Include="offsets.hpp" />
     <ClInclude Include="IKernel.hpp" />
+    <ClInclude Include="offsets2.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

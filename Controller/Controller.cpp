@@ -5,6 +5,8 @@
 #include "offsets.hpp"
 #include <cstdint>
 #include <string>
+#include "globals.hpp"
+#include "offsets2.hpp"
 
 
 //
@@ -70,6 +72,13 @@
 //    return 0;
 //}
 
+void UpdateList(IKernel Driver);
+
+_globals globals;
+
+std::vector<player_t> entities = {};
+std::vector<item_t> items = {};
+
 int main()
 {
     IKernel Driver = IKernel("\\\\.\\zalupka");
@@ -84,40 +93,94 @@ int main()
         Sleep(1000);
     }
 
-    //GetProcessBaseAddress(Driver.Modules->processId, Driver);
-
     std::cout << " process id: " << Driver.Modules->processId << std::endl;
     std::cout << " game base adress?: "  << Driver.Modules->baseAdress << std::endl; //<< "0x" std::hex << 
 
-
-    DWORD64 base = 0;
+	uint64_t Base = Driver.Modules->baseAdress;
     DWORD32 health = 0;
+	DWORD32  World = 0;
 
+	uintptr_t localPlayer;
 
-    //Client "add" offset
-    uint64_t add_off = 0x3f870;
+	localPlayer = Driver.rpm<uintptr_t>(Driver.Modules->baseAdress + OFFSET_LOCAL_ENT);
 
-    uint64_t g_Base_addr = 0;
+	//UpdateList(Driver);
+	while (true)
+	{
+		localPlayer = Driver.rpm<uintptr_t>(Driver.Modules->baseAdress + OFFSET_LOCAL_ENT);
 
-    //Driver.Read(Driver.Modules->bClient, &base);
+		int health = Driver.rpm<int>(localPlayer + OFFSET_HEALTH);
 
-    std::cout << " base: " << base << std::endl;
-
-    //Driver.Read(base , &g_Base_addr);
-
-    //std::cout << " g_Base_addr: " << g_Base_addr << std::endl;
-
-    while (true)
-    {
-        
-        
-
-        //Driver.Read(playerBase + offsets::Classes::CPlayer::m_iHealth, &health);
-        //std::cout << "health : " << health << std::endl;
-
-        Sleep(300);
-    }
-
+		//Driver.Read(Base + OFFSET_AMMO, &World);
+		std::cout << "localPlayer: " << localPlayer << std::endl;
+		std::cout << "health: " << health << std::endl;
+		Sleep(300);
+	}
 }
 
 
+void UpdateList(IKernel Driver)
+{
+	while (true)
+	{
+		// stores all data
+		std::vector<player_t> tmp{};
+
+		uint64_t NearTableSize = 0;
+		Driver.Read(globals.World + 0xEA8 + 0x08, &NearTableSize); //<uint32_t>
+
+		uint64_t FarTableSize = 0;
+		Driver.Read(globals.World + 0xFF0 + 0x08, &FarTableSize);
+
+
+		for (int i = 0; i < NearTableSize; i++)
+		{
+			uint64_t EntityTable = 0;
+			Driver.Read(globals.World + 0xEA8, &EntityTable);
+			if (!EntityTable) continue;
+
+			uint64_t Entity = 0;
+			Driver.Read(EntityTable + (i * 0x8), &Entity);
+			if (!Entity) continue;
+
+			// checking if player even networked
+			uintptr_t networkId = 0;
+			Driver.Read(Entity + 0x634, &networkId);
+			if (networkId == 0) continue;
+
+			player_t Player{};
+			Player.NetworkID = networkId;
+			Player.TableEntry = EntityTable;
+			Player.EntityPtr = Entity;
+
+			std::cout << " networkId: " << networkId << std::endl;
+
+			// adds info to the vector
+			tmp.push_back(Player);
+		}
+
+		for (int i = 0; i < FarTableSize; i++)
+		{
+			uint64_t EntityTable = 0;
+			Driver.Read(globals.World + 0xFF0, &EntityTable);
+			if (!EntityTable) continue;
+
+			uint64_t Entity = 0;
+			Driver.Read(EntityTable + (i * 0x8), &Entity);
+			if (!Entity) continue;
+
+			uintptr_t networkId = 0;
+			Driver.Read(Entity + 0x634, &networkId);
+			if (networkId == 0) continue;
+
+			player_t Player{};
+			Player.NetworkID = networkId;
+			Player.TableEntry = EntityTable;
+			Player.EntityPtr = Entity;
+			tmp.push_back(Player);
+		}
+		entities = tmp;
+		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		Sleep(100);
+	}
+}
