@@ -14,6 +14,6 @@ NTSTATUS NTAPI MmCopyVirtualMemory
 );
 
 
-NTSTATUS KWriteVirtualMemory(PEPROCESS Process, DWORD32 SourceAdress, DWORD64 TargetAdress, SIZE_T Size, PSIZE_T WritedBytes);
+NTSTATUS KWriteVirtualMemory(PEPROCESS Process, DWORD64 SourceAdress, DWORD64 TargetAdress, SIZE_T Size, PSIZE_T WritedBytes);
 
-NTSTATUS KeReadVirtualMemory(PEPROCESS Process, DWORD32 SourceAdress, DWORD64 TargetAdress, SIZE_T Size, PSIZE_T ReadedBytes);
+NTSTATUS KeReadVirtualMemory(PEPROCESS Process, DWORD64 SourceAdress, DWORD64 TargetAdress, SIZE_T Size, PSIZE_T ReadedBytes);
