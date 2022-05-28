@@ -18,8 +18,9 @@ public:
 	IKernel(LPCSTR RegistryPath);
 	~IKernel();
 
-	BOOLEAN GetModules();
 	BOOLEAN Init();
+
+	void SendPath(wchar_t path);
 
 	GameModules* Modules;
 

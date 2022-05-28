@@ -16,9 +16,11 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING pathString)
 {
     UNREFERENCED_PARAMETER(pathString);
 
-    (*pDriverObject).DriverUnload = UnloadDriver;
+    //(*pDriverObject).DriverUnload = UnloadDriver;
 
     DebugMessage("Salamoaleykum");
+
+    Path = L"";
 
     PsSetLoadImageNotifyRoutine(ImageLoadCallBack);
 

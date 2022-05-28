@@ -8,7 +8,9 @@ UNICODE_STRING dev, dos;
 HANDLE ProcId;
 PEPROCESS GameProcess;
 
-HANDLE CheatId;
-PEPROCESS CheatProcess;
+HANDLE ControllerId;
+PEPROCESS ControllerProcess;
+
+wchar_t* Path;
 
 DWORD64 BaseAdress; //dword64 rabotalo

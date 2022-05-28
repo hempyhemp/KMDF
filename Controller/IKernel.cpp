@@ -13,31 +13,24 @@ IKernel::IKernel(LPCSTR RegistryPath)
 	Modules = new GameModules();
 }
 
-BOOLEAN IKernel::GetModules()
-{
-	if (hDriver == INVALID_HANDLE_VALUE)
-		return false;
-
-	_KERNEL_GET_MODULES_REQUEST req{ 0, -1 };
-
-	BOOL result = DeviceIoControl(hDriver, IO_GET_MODULES, &req, sizeof(req), &req, sizeof(req), nullptr, nullptr);
-
-	if (!result) return false;
-
-	if (!NT_SUCCESS(req.result)) return false;
-
-	Modules->baseAdress = req.baseAdress;
-
-	return true;
-}
 
 BOOLEAN IKernel::Init()
 {
-	_KERNEL_INIT_DATA_REQUEST req{0, GetCurrentProcessId(), -1};
+	_KERNEL_PROCESS_DATA_REQUEST req{0, GetCurrentProcessId(), 0, -1};
 	DeviceIoControl(hDriver, IO_INIT_DATA, &req, sizeof(req), &req, sizeof(req), nullptr, nullptr);
 
 	Modules->processId = req.gameId;
+	Modules->baseAdress = req.baseAdress;
+
+	if (!req.gameId) return false;
 	return true;
+}
+
+void IKernel::SendPath(wchar_t path)
+{
+	_KERNEL_INIT_REQUEST req{ path };
+
+	DeviceIoControl(hDriver, IO_INIT_PATH, &req, sizeof(req), &req, sizeof(req), nullptr, nullptr);
 }
 
 IKernel::~IKernel()
